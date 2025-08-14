@@ -1,0 +1,28 @@
+{
+	"name": "inventory_store",
+	"version": "1.0.0",
+	"main": "app.js",
+	"type": "commonjs",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"dev": "node --watch $( node -p \"try { require('./package.json').main } catch(e) {console.error(e)}\")"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Stan-tab/Inventory-store.git"
+	},
+	"author": "Stan",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/Stan-tab/Inventory-store/issues"
+	},
+	"homepage": "https://github.com/Stan-tab/Inventory-store#readme",
+	"description": "",
+	"dependencies": {
+		"dotenv": "^17.2.1",
+		"ejs": "^3.1.10",
+		"express": "^5.1.0",
+		"express-validator": "^7.2.1",
+		"pg": "^8.16.3"
+	}
+}
