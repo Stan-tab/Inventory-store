@@ -1,15 +1,27 @@
 const { pool } = require("./pool.js");
 
-async function getItemData() {
+async function getItemsData(name) {
+	let data;
 	const sql = `
-    SELECT groupname, itemname, to_char(release_date, 'DD/MM/YYYY'), devs_name
+    SELECT groupname, i.id, itemname, to_char(release_date, 'DD/MM/YYYY'), devs_name
         FROM groups g LEFT JOIN grouptoitems gi ON g.id=gi.group_id
         LEFT JOIN items i ON i.id=gi.item_id
         LEFT JOIN devstoitems ON i.id = devstoitems.item_id
-        LEFT JOIN devs ON devs.id = devstoitems.devs_id;
-    `;
-	const { rows } = await pool.query(sql);
-	return rows;
+        LEFT JOIN devs ON devs.id = devstoitems.devs_id`;
+	if (name) {
+		data = (
+			await pool.query(sql + " WHERE LOWER(itemname) LIKE ($1);", [
+				name + "%",
+			])
+		).rows;
+	} else {
+		data = (await pool.query(sql)).rows;
+	}
+
+	for (let i = 0; i < data.length; i++) {
+		data[i].genres = await getGenres(data[i].itemname);
+	}
+	return data;
 }
 
 async function getGenres(itemName) {
@@ -24,6 +36,14 @@ async function getGenres(itemName) {
 }
 
 async function createItem(itemData) {
+	// itemData = { this will be inside of itemdata
+	// 	devs,
+	// 	name,
+	// 	group,
+	// 	genres: [],
+	// 	releaseDate,
+	// 	description,
+	// };
 	const sqlItems = `
     INSERT INTO items (itemname, release_date, description) 
     VALUES ($1, $2, $3);
@@ -32,46 +52,177 @@ async function createItem(itemData) {
     INSERT INTO devs (devs_name) VALUES ($1);
     `;
 
-	const sqlDevsToItems = `
-    INSERT INTO devsToItems (devs_id, item_id) VALUES
-    (
-        (SELECT id FROM devs WHERE devs_name=$1),
-        (SELECT id FROM items WHERE itemName=$2)
-    );
-    `;
+	const existedDevs = (
+		await pool.query("SELECT LOWER(devs_name) AS devs FROM devs;")
+	).rows.map((e) => e.devs);
 
-	const sqlGroupToItems = `
-    INSERT INTO groupToItems (group_id, item_id) VALUES
-    (
-      (SELECT id FROM groups WHERE groupName=$1),
-      (SELECT id FROM items WHERE itemName=$2)
-    );
-    `;
+	try {
+		await pool.query(sqlItems, [
+			itemData.name,
+			itemData.releaseDate,
+			itemData.description,
+		]);
+	} catch (e) {
+		throw new Error(
+			`Similar name already exists: ${itemData.name} \n ${e}`
+		);
+	}
 
-	const sqlItemToGenres = `
-    INSERT INTO itemToGenres (item_id, genre_id)
-    VALUES
-    ( 
-      (SELECT id FROM items WHERE itemName=$1),
-      (SELECT id FROM genres WHERE genreName=$2)
-    ),
-    `;
+	if (!existedDevs.includes(itemData.devs.toLowerCase())) {
+		await pool.query(sqlDevs, [itemData.devs]);
+	}
 
-	await pool.query(sqlItems, [
-		itemData.name,
-		itemData.releaseDate,
-		itemData.description,
-	]);
-	await pool.query(sqlDevs, [itemData.devs]);
-	await pool.query(sqlDevsToItems, [itemData.name, itemData.devs]);
-	await pool.query(sqlGroupToItems, [itemData.group, itemData.name]);
+	await connectTables(
+		"devsToItems",
+		"devs_id",
+		"item_id",
+		"devs",
+		"items",
+		"devs_name",
+		"itemname",
+		itemData.devs,
+		itemData.name
+	);
+	await connectTables(
+		"groupToItems",
+		"group_id",
+		"item_id",
+		"groups",
+		"items",
+		"groupname",
+		"itemName",
+		itemData.group,
+		itemData.name
+	);
+
+	const insertedGenres = (
+		await pool.query("SELECT LOWER(genrename) AS gn FROM genres;")
+	).rows.map((e) => e.gn);
 
 	for (let i = 0; i < itemData.genres.length; i++) {
 		const genre = itemData.genres[i];
-		await pool.query(sqlItemToGenres, [itemData.name, genre]);
+		if (!insertedGenres.includes(genre.toLowerCase())) {
+			await createGenre(genre);
+		}
+		await connectTables(
+			"itemToGenres",
+			"item_id",
+			"genre_id",
+			"items",
+			"genres",
+			"itemName",
+			"genreName",
+			itemData.name,
+			genre
+		);
+	}
+}
+
+async function createGenre(name) {
+	try {
+		const sql = `INSERT INTO genres (genrename) VALUES ($1);`;
+		await pool.query(sql, [name]);
+	} catch (e) {
+		throw new Error(`This tag already exists:${name} \n ${e}`);
+	}
+}
+
+async function connectTables(
+	tableName,
+	id1,
+	id2,
+	conTable1,
+	conTable2,
+	takedValue1,
+	takedValue2,
+	value1,
+	value2
+) {
+	try {
+		const sql = `
+        INSERT INTO ${tableName} (${id1}, ${id2})
+        VALUES
+            ( 
+              (SELECT id FROM ${conTable1} WHERE LOWER(${takedValue1})=$1),
+              (SELECT id FROM ${conTable2} WHERE LOWER(${takedValue2})=$2)
+            );
+        `;
+
+		await pool.query(sql, [value1.toLowerCase(), value2.toLowerCase()]);
+	} catch (e) {
+		throw new Error(
+			`This values can not be connected ${value1} and ${value2} \n ${e}`
+		);
+	}
+}
+
+async function createGroup(name) {
+	const sql = `INSERT INTO groups (groupName) VALUES ($1);`;
+	await pool.query(sql, [name]);
+}
+
+async function deleteItem(itemId) {
+	const sql = [
+		"DELETE FROM devstoitems WHERE item_id=$1;",
+		"DELETE FROM itemtogenres WHERE item_id=$1;",
+		"DELETE FROM grouptoitems WHERE item_id=$1;",
+		"DELETE FROM itemtogenres WHERE item_id=$1;",
+		"DELETE FROM items WHERE id=$1;",
+	];
+	await deletor(sql, itemId);
+}
+
+async function deleteDevs(name) {
+	const sql = [
+		"DELETE FROM devstoitems WHERE devs_id=(SELECT id FROM devs WHERE devs_name=$1);",
+		"DELETE FROM devs WHERE devs_name=$1;",
+	];
+	await deletor(sql, name);
+}
+
+async function deleteGroups(name) {
+	const { rows } = await pool.query(
+		`
+	SELECT itemname FROM items 
+	WHERE id = ANY(
+		SELECT item_id FROM groups g 
+		LEFT JOIN grouptoitems gi ON g.id=gi.group_id WHERE g.groupname=$1);	
+		`,
+		[name]
+	);
+	rows.forEach(async (e) => {
+		await deleteItem(e.id);
+	});
+
+	const sql = [
+		"DELETE FROM grouptoitems WHERE group_id=(SELECT id FROM groups WHERE groupname=$1);",
+		"DELETE FROM groups WHERE groupname=$1;",
+	];
+	await deletor(sql, name);
+}
+
+async function deletor(querys, value) {
+	try {
+		for (let i = 0; i < querys.length; i++) {
+			await pool.query(querys[i], [value]);
+		}
+	} catch (e) {
+		throw new Error(`Failed to delete ${value} \n ${e}`);
 	}
 }
 
 (async () => {
-	console.log(await getItemData("Hotline Miami"));
+	await deleteItem(1);
+	console.log(await getItemsData());
 })();
+
+module.exports = {
+	createItem,
+	createGroup,
+	createGenre,
+	getItemsData,
+	getGenres,
+	deleteItem,
+	deleteDevs,
+	deleteGroups,
+};
