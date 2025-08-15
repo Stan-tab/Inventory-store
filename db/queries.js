@@ -211,11 +211,6 @@ async function deletor(querys, value) {
 	}
 }
 
-(async () => {
-	await deleteItem(1);
-	console.log(await getItemsData());
-})();
-
 module.exports = {
 	createItem,
 	createGroup,
