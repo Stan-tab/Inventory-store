@@ -1,21 +1,23 @@
 const { pool } = require("./pool.js");
 
-async function getItemsData(name) {
+async function getItemsData(name, skip) {
 	let data;
 	const sql = `
-    SELECT groupname, i.id, itemname, to_char(release_date, 'DD/MM/YYYY'), devs_name
+    SELECT groupname, i.id, itemname, description, to_char(release_date, 'DD/MM/YYYY'), devs_name
         FROM groups g LEFT JOIN grouptoitems gi ON g.id=gi.group_id
         LEFT JOIN items i ON i.id=gi.item_id
         LEFT JOIN devstoitems ON i.id = devstoitems.item_id
         LEFT JOIN devs ON devs.id = devstoitems.devs_id`;
+	const limit = " LIMIT 10 OFFSET $1;";
 	if (name) {
 		data = (
-			await pool.query(sql + " WHERE LOWER(itemname) LIKE ($1);", [
+			await pool.query(sql + " WHERE LOWER(itemname) LIKE ($2)" + limit, [
+				skip || 0,
 				name + "%",
 			])
 		).rows;
 	} else {
-		data = (await pool.query(sql)).rows;
+		data = (await pool.query(sql + limit, [skip || 0])).rows;
 	}
 
 	for (let i = 0; i < data.length; i++) {
@@ -33,6 +35,47 @@ async function getGenres(itemName) {
     `;
 	const { rows } = await pool.query(sql, [itemName]);
 	return rows.map((e) => e.genrename);
+}
+
+async function getItemsByGroup(groupName, skip) {
+	const rows = await getBy("groupName", groupName, skip);
+	return rows;
+}
+
+async function getItemsBydevs(name, skip) {
+	const rows = await getBy("devs_name", name, skip);
+	return rows;
+}
+
+async function getItemsByGenres(genres, skip) {
+	if (genres.length === 0) {
+		return await getItemsData();
+	}
+	const sql = `
+	SELECT groupname, i.id, itemname, description, to_char(release_date, 'DD/MM/YYYY'), devs_name FROM genres 
+	LEFT JOIN itemtogenres ig ON genres.id=ig.genre_id
+	LEFT JOIN items i ON i.id=ig.item_id
+	LEFT JOIN devstoitems ON i.id = devstoitems.item_id
+    LEFT JOIN devs ON devs.id = devstoitems.devs_id
+	LEFT JOIN grouptoitems gi ON gi.item_id=i.id
+	LEFT JOIN groups ON gi.group_id=groups.id
+	WHERE LOWER(genrename) IN (${[...Array(genres.length)]
+		.map((c, i) => `LOWER($${i + 2})`)
+		.join(", ")})
+	LIMIT 10 OFFSET $1;
+	`;
+	try {
+		var { rows } = await pool.query(sql, [skip || 0, ...genres]);
+	} catch (e) {
+		throw new Error(
+			`These genres are not valid ${genres.join(", ")} \n ${e}`
+		);
+	}
+
+	for (let i = 0; i < rows.length; i++) {
+		rows[i].genres = await getGenres(rows[i].itemname);
+	}
+	return rows;
 }
 
 async function createItem(itemData) {
@@ -211,6 +254,25 @@ async function deletor(querys, value) {
 	}
 }
 
+async function getBy(comparator, value, skip) {
+	try {
+		var { rows } = await pool.query(
+			`
+				SELECT groupname, i.id, itemname, description, to_char(release_date, 'DD/MM/YYYY'), devs_name
+        		FROM groups g LEFT JOIN grouptoitems gi ON g.id=gi.group_id
+        		LEFT JOIN items i ON i.id=gi.item_id
+        		LEFT JOIN devstoitems ON i.id = devstoitems.item_id
+        		LEFT JOIN devs ON devs.id = devstoitems.devs_id
+				WHERE ${comparator}=$1 LIMIT 10 OFFSET $2;
+			`,
+			[value, skip || 0]
+		);
+	} catch (e) {
+		throw new Error(`Sorting by ${comparator} is not possible \n ${e}`);
+	}
+	return rows;
+}
+
 module.exports = {
 	createItem,
 	createGroup,
@@ -220,4 +282,7 @@ module.exports = {
 	deleteItem,
 	deleteDevs,
 	deleteGroups,
+	getItemsByGroup,
+	getItemsBydevs,
+	getItemsByGenres,
 };
