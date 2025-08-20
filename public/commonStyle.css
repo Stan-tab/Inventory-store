@@ -1,0 +1,37 @@
+:root {
+	background-color: var(--backGround-color);
+	color: var(--color);
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--backGround-color: rgb(24, 30, 44);
+		--color: rgb(187, 206, 203);
+        background-image: url("icons/star.svg");
+        background-size: 60px;
+		background-repeat: repeat-y;
+        background-position: left;
+	}
+	a {
+		color: rgb(4, 223, 223);
+	}
+	.down {
+		filter: contrast(1%);
+	}
+}
+
+@media (prefers-color-scheme: light) {
+	:root {
+		--backGround-color: rgb(187, 206, 203);
+		--color: rgb(24, 30, 44);
+	}
+	a {
+		color: rgb(0, 42, 155);
+	}
+}

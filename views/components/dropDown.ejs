@@ -1,0 +1,13 @@
+<div class="container">
+    <button onclick="showList(this)">
+        <p>
+            <%= name %>
+        </p>
+        <img class="down" src="/icons/arrowDown.svg#down" alt="">
+    </button>
+    <ul>
+        <% if (locals.attr) { %>
+        <%- include("list.ejs", {attr}) %>
+        <% } %>
+    </ul>
+</div>

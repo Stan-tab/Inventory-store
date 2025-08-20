@@ -1,12 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="/style.css">
-		<title>Index</title>
-	</head>
-	<body>
-		<h1>Hello</h1>
-	</body>
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="/commonStyle.css">
+	<link rel="stylesheet" href="/styles/index.css">
+	<script src="/scripts/index.js" defer></script>
+	<title>Index</title>
+</head>
+<body>
+	<header>
+		<h1>Inventory Store</h1>
+		<div class="elements">
+			<%- include( "components/dropDown.ejs" , { name: "Groups" , attr:["hiadadad","wawdasdawd"] }) %>
+				<%- include("components/dropDown.ejs", { name: "Tags" }) %>
+		</div>
+	</header>
+</body>
 </html>

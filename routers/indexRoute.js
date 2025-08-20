@@ -4,8 +4,6 @@ const mainController = require("../controllers/indexController.js");
 const indexRouter = Router();
 
 indexRouter.get("/", mainController.indexPageGet);
-indexRouter.all("/{*splat}", (req, res) => {
-	res.send("UWU");
-});
+indexRouter.all("/{*splat}", mainController.E404);
 
 module.exports = indexRouter;

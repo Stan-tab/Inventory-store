@@ -5,6 +5,11 @@ function indexPageGet(req, res) {
 	res.render("index");
 }
 
+function E404(req, res) {
+	res.render("404");
+}
+
 module.exports = {
 	indexPageGet,
+	E404,
 };
