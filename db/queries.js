@@ -27,14 +27,37 @@ async function getItemsData(name, skip) {
 }
 
 async function getGenres(itemName) {
-	const sql = `
-    SELECT genrename FROM items 
-    LEFT JOIN itemtogenres ig ON items.id=ig.item_id 
-    LEFT JOIN genres ON ig.genre_id=genres.id 
-    WHERE items.itemname=$1;
-    `;
-	const { rows } = await pool.query(sql, [itemName]);
+	if (itemName) {
+		const sql = `
+			SELECT genrename FROM items 
+    		LEFT JOIN itemtogenres ig ON items.id=ig.item_id 
+    		LEFT JOIN genres ON ig.genre_id=genres.id 
+    		WHERE LOWER(items.itemname)=LOWER($1);
+		`;
+		const { rows } = await pool.query(sql, [itemName]);
+		return rows.map((e) => e.genrename);
+	}
+
+	const sql = `SELECT genrename FROM genres;`;
+	const { rows } = await pool.query(sql);
 	return rows.map((e) => e.genrename);
+}
+
+async function getGroups(itemName) {
+	if (itemName) {
+		const { rows } = await pool.query(
+			`
+			SELECT groupname FROM items i 
+			LEFT JOIN grouptoitems gi ON i.id=gi.item_id 
+			LEFT JOIN groups g ON g.id=gi.group_id
+			WHERE LOWER(i.itemname)=LOWER($1);
+		`,
+			[itemName]
+		);
+		return rows.map((e) => e.groupname);
+	}
+	const { rows } = await pool.query(`SELECT groupname FROM groups`);
+	return rows.map((e) => e.groupname);
 }
 
 async function getItemsByGroup(groupName, skip) {
@@ -279,6 +302,7 @@ module.exports = {
 	createGenre,
 	getItemsData,
 	getGenres,
+	getGroups,
 	deleteItem,
 	deleteDevs,
 	deleteGroups,
