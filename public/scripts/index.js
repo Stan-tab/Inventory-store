@@ -5,10 +5,9 @@ function showList(e) {
 	img.classList.toggle("up");
 }
 
-function sender(query, timeout = 700) {
-	this.form = document.querySelector(query);
-
-	this.sendForm = () => {
+function sender(timeout = 700) {
+	this.sendForm = (e) => {
+		this.form = e.parentElement;
 		clearTimeout(this.id);
 		this.id = setTimeout(() => {
 			this.form.submit();
@@ -16,5 +15,5 @@ function sender(query, timeout = 700) {
 	};
 }
 
-const sendHeader = new sender("header form");
-const sendMain = new sender("main form");
+const sendHeader = new sender();
+const sendMain = new sender();

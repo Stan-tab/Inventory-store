@@ -3,7 +3,7 @@ const { pool } = require("./pool.js");
 async function getItemsData(name, skip) {
 	let data;
 	const sql = `
-    SELECT groupname, i.id, itemname, description, to_char(release_date, 'DD/MM/YYYY'), devs_name
+    SELECT groupname, i.id, itemname, description, to_char(release_date, 'DD/MM/YYYY') AS date, devs_name
         FROM groups g LEFT JOIN grouptoitems gi ON g.id=gi.group_id
         LEFT JOIN items i ON i.id=gi.item_id
         LEFT JOIN devstoitems ON i.id = devstoitems.item_id

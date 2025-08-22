@@ -11,6 +11,7 @@ header {
 	margin-right: calc(1vw - 0.5rem);
 	display: flex;
 	gap: clamp(1rem, 5vw, 6rem);
+	align-items: center;
 	.container {
 		display: flex;
 		align-items: center;
@@ -24,7 +25,7 @@ header {
 			padding: 0;
 			margin: 0;
 			list-style-type: none;
-			top: 86%;
+			top: 110%;
 			transform: scaleY(0);
 			transform-origin: top;
 			> li {
@@ -38,13 +39,29 @@ header {
 					overflow: hidden;
 					text-overflow: ellipsis;
 					font-size: clamp(0.7rem, 2vw, 1.3rem);
+					border-bottom: 1px solid transparent;
+					background-color: unset;
+					/* border-image: linear-gradient(to left, grey 90%, transparent 100%)
+						100% 1; */
+					position: relative;
+				}
+				> button::before {
+					content: "";
+					position: absolute;
+					width: 100%;
+					height: 100%;
+					left: -5px;
+					top: -5px;
+					border-radius: 5px;
+					padding-bottom: 1px;
+					background: linear-gradient(to left, grey 90%, transparent 100%);
+					mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+					mask-composite: exclude;
 				}
 			}
 			> li + li {
 				margin-top: 5px;
 				padding-top: 2px;
-				border-top: 1px solid #0b0d45;
-				border-image: linear-gradient(to left, #000 90%, transparent 50%) 100% 1;
 			}
 		}
 	}
@@ -83,4 +100,51 @@ ul.show {
 
 .up {
 	transform: rotateZ(-180deg);
+}
+
+.search input {
+	background-color: #142856;
+	color: var(--color);
+	border: unset;
+	outline: 1px solid #2929a2;
+	border-radius: 5px;
+	padding-left: 1rem;
+	font-size: 1rem;
+}
+
+main .search {
+	display: none;
+	width: min-content;
+	margin: 0 auto;
+}
+
+input::placeholder {
+	color: #2b5bab;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: #ffffff;
+	transition: background-color 5000s ease-in-out 0s;
+	box-shadow: inset 0 0 20px 20px #142856;
+}
+
+main {
+	margin-top: -1rem;
+}
+
+.container > button > p {
+	margin: 10px 0;
+}
+
+@media (max-width: 670px) {
+	main .search {
+		display: block;
+	}
+	header .search {
+		display: none;
+	}
 }

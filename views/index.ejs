@@ -12,21 +12,13 @@
 	<header>
 		<h1>Inventory Store</h1>
 		<div class="elements">
-			<div class="search">
-				<form action="/search" method="get">
-					<input type="text" name="q" oninput="sendHeader.sendForm()">
-				</form>
-			</div>
+			<%- include("components/searchInput.ejs", {handler: "sendHeader.sendForm(this)"}) %>
 			<%- include( "components/dropDown.ejs" , { name: "Groups" , attr:locals.groups }) %>
 				<%- include("components/dropDown.ejs", { name: "Tags" , attr:locals.genres }) %>
 		</div>
 	</header>
 	<main>
-		<div class="search">
-			<form action="/search" method="get">
-				<input type="text" name="q" oninput="sendMain.sendForm()">
-			</form>
-		</div>
+		<%- include("components/searchInput.ejs", {handler: "sendMain.sendForm(this)"}) %>
 		<% if(locals.items) { %>
 			<% items.forEach(item => { %>
 				<%- include("components/card.ejs", {item}) %>
