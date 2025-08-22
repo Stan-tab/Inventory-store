@@ -157,16 +157,22 @@ main {
 			overflow: hidden;
 			text-overflow: ellipsis;
 		}
-		> div {
+		> div.opt {
 			display: flex;
 			justify-content: space-between;
 		}
 		span {
 			display: inline-block;
-			margin: 0 5px 5px 5px;
+			margin: 5px;
 			padding: 3px 7px;
 			border-radius: 10px;
 			outline: 1px solid red;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			max-width: 100px;
+		}
+		div.tags {
+			max-height: calc(36px * 2)
 		}
 	}
 }

@@ -14,7 +14,7 @@
 		<div class="elements">
 			<%- include("components/searchInput.ejs", {handler: "sendHeader.sendForm(this)"}) %>
 			<%- include( "components/dropDown.ejs" , { name: "Groups" , attr:locals.groups }) %>
-				<%- include("components/dropDown.ejs", { name: "Tags" , attr:locals.genres }) %>
+			<%- include("components/dropDown.ejs", { name: "Tags" , attr:locals.genres }) %>
 		</div>
 	</header>
 	<%- include("components/searchInput.ejs", {handler: "sendMain.sendForm(this)"}) %>

@@ -1,14 +1,16 @@
 <div class="card">
     <a href="/item/<%= item.id %>">
         <h1><%= item.itemname %></h1>
-        <div>
+        <div class="opt">
             <h4><%= item.devs_name %></h4>
             <h4><%= item.date %></h4>
         </div>
         <p><%= item.description %></p>
-        <% [...Array(item.genres.length > 5 ? 5 : item.genres.length)]
-            .map((e, i) => item.genres[i]).forEach(genre => { %> <%# This creates Array with 5 or less elements %>
-            <span class="genre"><%= genre %></span> 
-        <% }); %>
+        <div class="tags">
+            <% [...Array(item.genres.length > 5 ? 5 : item.genres.length)]
+                .map((e, i) => item.genres[i]).forEach(genre => { %> <%# This creates Array with 5 or less elements %>
+                <span class="genre"><%= genre %></span>
+            <% }); %>
+        </div>
     </a>
 </div>
