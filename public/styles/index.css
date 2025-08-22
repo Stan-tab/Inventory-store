@@ -32,8 +32,7 @@ header {
 				padding-left: 10px;
 				> button {
 					text-align: left;
-					border-radius: 5px;
-					padding: 6px 0;
+					padding: 3px 0 10px 0;
 					width: 100%;
 					white-space: nowrap;
 					overflow: hidden;
@@ -41,17 +40,15 @@ header {
 					font-size: clamp(0.7rem, 2vw, 1.3rem);
 					border-bottom: 1px solid transparent;
 					background-color: unset;
-					/* border-image: linear-gradient(to left, grey 90%, transparent 100%)
-						100% 1; */
 					position: relative;
 				}
 				> button::before {
 					content: "";
 					position: absolute;
 					width: 100%;
-					height: 100%;
+					height: 120%;
 					left: -5px;
-					top: -5px;
+					top: -10px;
 					border-radius: 5px;
 					padding-bottom: 1px;
 					background: linear-gradient(to left, grey 90%, transparent 100%);
@@ -112,7 +109,7 @@ ul.show {
 	font-size: 1rem;
 }
 
-main .search {
+body > .search {
 	display: none;
 	width: min-content;
 	margin: 0 auto;
@@ -134,15 +131,34 @@ input:-webkit-autofill:active {
 
 main {
 	margin-top: -1rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+	gap: 1rem;
+}
+
+.card {
+	outline: 1px solid #11115d;
+	border-radius: 10px;
+	max-width: 300px;
+	background-color: var(--backGround-color);
+	box-sizing: border-box;
+	padding: 1rem;
+	justify-self: center;
+	> a {
+		all: unset;
+	}
 }
 
 .container > button > p {
 	margin: 10px 0;
 }
 
-@media (max-width: 670px) {
-	main .search {
+@media (max-width: 700px) {
+	body > .search {
 		display: block;
+	}
+	main {
+		margin-top: 1rem;
 	}
 	header .search {
 		display: none;

@@ -17,8 +17,8 @@
 				<%- include("components/dropDown.ejs", { name: "Tags" , attr:locals.genres }) %>
 		</div>
 	</header>
+	<%- include("components/searchInput.ejs", {handler: "sendMain.sendForm(this)"}) %>
 	<main>
-		<%- include("components/searchInput.ejs", {handler: "sendMain.sendForm(this)"}) %>
 		<% if(locals.items) { %>
 			<% items.forEach(item => { %>
 				<%- include("components/card.ejs", {item}) %>
