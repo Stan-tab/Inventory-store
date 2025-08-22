@@ -13,6 +13,8 @@ body {
 	:root {
 		--backGround-color: rgb(24, 30, 44);
 		--color: rgb(187, 206, 203);
+		--input-back: #142856;
+		--placeholder: #2b5bab;
         background-image: url("icons/star.svg");
         background-size: 60px;
 		background-repeat: repeat-y;
@@ -30,6 +32,8 @@ body {
 	:root {
 		--backGround-color: rgb(187, 206, 203);
 		--color: rgb(24, 30, 44);
+		--input-back: #4368bc;
+		--placeholder: #3b5074;
 	}
 	a {
 		color: rgb(0, 42, 155);
