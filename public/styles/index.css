@@ -30,7 +30,7 @@ header {
 			transform-origin: top;
 			> li {
 				padding-left: 10px;
-				> button {
+				button {
 					text-align: left;
 					padding: 3px 0 10px 0;
 					width: 100%;
@@ -42,7 +42,7 @@ header {
 					background-color: unset;
 					position: relative;
 				}
-				> button::before {
+				button::before {
 					content: "";
 					position: absolute;
 					width: 100%;
@@ -99,34 +99,11 @@ ul.show {
 	transform: rotateZ(-180deg);
 }
 
-.search input {
-	background-color: var(--input-back);
-	color: var(--color);
-	border: unset;
-	outline: 1px solid #2929a2;
-	border-radius: 5px;
-	padding-left: 1rem;
-	font-size: 1rem;
-}
 
 body > .search {
 	display: none;
 	width: min-content;
 	margin: 0 auto;
-}
-
-input::placeholder {
-	color: var(--placeholder);
-}
-
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-	-webkit-background-clip: text;
-	-webkit-text-fill-color: var(--color);
-	transition: background-color 5000s ease-in-out 0s;
-	box-shadow: inset 0 0 20px 20px var(--input-back);
 }
 
 main {
@@ -179,6 +156,10 @@ main {
 
 .container > button > p {
 	margin: 10px 0;
+}
+
+.card:hover{
+	filter: brightness(110%);
 }
 
 @media (max-width: 700px) {

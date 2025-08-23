@@ -7,7 +7,7 @@
     </button>
     <ul>
         <% if (locals.attr) { %>
-        <%- include("list.ejs", {attr}) %>
+        <%- include("list.ejs", {attr, name: name.toLowerCase().slice(0, -1)}) %>
         <% } %>
     </ul>
 </div>

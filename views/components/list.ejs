@@ -1,5 +1,7 @@
 <% attr.forEach(e => { %>
     <li>
-        <button><%= e %></button>
+        <form action="/searchBy" method="post">
+            <button name="<%= name %>" value="<%= e %>"><%= e %></button>
+        </form>
     </li>
 <%}); %>
