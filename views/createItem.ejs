@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="/commonStyle.css">
     <link rel="stylesheet" href="/styles/createItem.css">
     <script src="/scripts/createItem.js" defer></script>
-    <%# itemData={ devs, name, group, genres: [], releaseDate, description, }; %>
 </head>
 <body>
     <header>
@@ -58,7 +57,10 @@
                     </datalist>
                 <% } %>
                 <div class="genres">
-                    <input type="text" list="tags" name="genres[]" id="genre">
+                    <div class="input">
+                        <input required type="text" list="tags" name="genres[]" id="genre">
+                        <button type="button" onclick="removeInput(this)">-</button>
+                    </div>
                     <button type="button" class="tagAdd" onclick="addInput(this)">+</button>
                 </div>
             </div>

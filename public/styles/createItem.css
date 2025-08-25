@@ -5,9 +5,9 @@ form {
 	margin: 0 auto;
 	justify-content: center;
 	align-items: center;
-	>  button:last-child {
-        margin-top: 1rem;
-    }
+	> button:last-child {
+		margin-top: 1rem;
+	}
 }
 
 header h1 {
@@ -17,10 +17,39 @@ header h1 {
 }
 
 .genres {
-	max-width: 300px;
-	> input {
-		margin-left: 0.5rem;
-		margin-top: 0.5rem;
+	max-width: 310px;
+	display: grid;
+	gap: 10px;
+	grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+	> .input > input {
 		width: 100px;
+		padding-left: 2rem;
 	}
+}
+
+.input {
+	display: inline-block;
+	position: relative;
+	> button {
+		box-sizing: border-box;
+		padding: 0 10px;
+		font-size: 1rem;
+		font-weight: bolder;
+		position: absolute;
+		left: 0px;
+		outline: none;
+		background-color: var(--input-back);
+		height: inherit;
+	}
+	> button:hover {
+		filter: brightness(130%);
+	}
+}
+
+.tagAdd {
+	height: 20px;
+	width: 20px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
