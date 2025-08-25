@@ -7,6 +7,7 @@
 body {
 	margin: 0;
 	padding: 0;
+	min-height: 100vh;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -40,21 +41,36 @@ body {
 	}
 }
 
-input {
+input,
+select,
+textarea {
 	background-color: var(--input-back);
 	color: var(--color);
 	border: unset;
 	outline: 1px solid #2929a2;
 	border-radius: 5px;
-	padding-left: 1rem;
 	font-size: 1rem;
+}
+
+input {
+	padding-left: 1rem;
+}
+select, textarea {
+	padding: 3px;
+}
+
+textarea {
+	max-width: 400px;
+	min-width: 250px;
+	max-height: 300px;
+	min-height: 50px;
 }
 
 input::placeholder {
 	color: var(--placeholder);
 }
 
-input:hover{
+input:hover {
 	filter: brightness(110%);
 }
 
@@ -66,4 +82,18 @@ input:-webkit-autofill:active {
 	-webkit-text-fill-color: var(--color);
 	transition: background-color 5000s ease-in-out 0s;
 	box-shadow: inset 0 0 20px 20px var(--input-back);
+}
+
+button {
+	background-color: color-mix(in srgb, var(--backGround-color) 90%, rgb(67, 162, 218) 20%);
+	color: var(--color);
+	border: unset;
+	padding: 5px;
+	font-size: 1rem;
+	border-radius: 5px;
+	outline: 1px solid #683dd6;
+}
+
+button:hover {
+	filter: brightness(70%);
 }

@@ -1,0 +1,26 @@
+form {
+	display: flex;
+	flex-direction: column;
+	width: fit-content;
+	margin: 0 auto;
+	justify-content: center;
+	align-items: center;
+	>  button:last-child {
+        margin-top: 1rem;
+    }
+}
+
+header h1 {
+	padding: 1.5rem;
+	background-color: var(--backGround-color);
+	margin: 0;
+}
+
+.genres {
+	max-width: 300px;
+	> input {
+		margin-left: 0.5rem;
+		margin-top: 0.5rem;
+		width: 100px;
+	}
+}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create item</title>
+    <link rel="stylesheet" href="/commonStyle.css">
+    <link rel="stylesheet" href="/styles/createItem.css">
+    <script src="/scripts/createItem.js" defer></script>
+    <%# itemData={ devs, name, group, genres: [], releaseDate, description, }; %>
+</head>
+<body>
+    <header>
+        <h1>Create Item</h1>
+    </header>
+    <main>
+        <form action="/new" method="post">
+            <label for="name">Item name:
+                <p><input required type="text" id="name" name="name"></p>
+            </label>
+            <label for="creators">Creators:
+                <p><input required id="creators" type="text" name="devs"></p>
+            </label>
+            <label>
+                Group:
+                <p>
+                <% if(locals.groups) { %>
+                    <select name="group" required>
+                        <option value="">
+                            Select Group
+                        </option>
+                        <% groups.forEach(i=> { %>
+                            <option value="<%= i %>">
+                                <%= i %>
+                            </option>
+                        <% }); %>
+                    </select>
+                    <% } else { %>
+                        <a href="/group">Create new group</a>
+                    <% } %>
+                </p>
+            </label>
+            <label for="date">Release date:
+                <p>
+                    <input required type="date" id="date" name="releaseDate">
+                </p>
+            </label>
+            <label for="description">Input the description:
+                <p><textarea name="description" id="description" placeholder="Your description"></textarea></p>
+            </label>
+            <div>
+                <p><label for="genre">Add genres</label></p>
+                <% if(locals.genres) { %>
+                    <datalist name="genres[]" id="tags">
+                        <% genres.forEach(i => { %>
+                            <option value="<%= i %>"><%= i %></option>
+                        <% }); %>
+                    </datalist>
+                <% } %>
+                <div class="genres">
+                    <input type="text" list="tags" name="genres[]" id="genre">
+                    <button type="button" class="tagAdd" onclick="addInput(this)">+</button>
+                </div>
+            </div>
+            <%if (locals.groups) { %> <button>Submit</button> <% } %>
+        </form>
+    </main>
+</body>
+</html>

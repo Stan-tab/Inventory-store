@@ -10,6 +10,10 @@ indexRouter.get("/search", (req, res) => {
 indexRouter.post("/searchBy", (req, res) => {
 	console.log(req.body);
 });
+indexRouter.get("/new", mainController.createItem);
+indexRouter.post("/new", (req, res) => {
+	console.log(req.body);
+});
 indexRouter.all("/{*splat}", mainController.E404);
 
 module.exports = indexRouter;
