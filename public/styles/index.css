@@ -148,9 +148,12 @@ main {
 			overflow: hidden;
 			text-overflow: ellipsis;
 			max-width: 100px;
+			white-space: nowrap;
+			text-overflow: ellipsis;
 		}
 		div.tags {
 			max-height: calc(36px * 2);
+			overflow: hidden;
 		}
 	}
 }

@@ -1,4 +1,4 @@
-const { body, validationResult } = require("express-validator");
+const { body, validationResult, query } = require("express-validator");
 const db = require("../db/queries.js");
 
 const message = " should not be empty";
@@ -20,6 +20,12 @@ const validateItem = [
 		.trim()
 		.notEmpty()
 		.withMessage("Date" + message),
+	body("genres")
+		.isArray({ min: 1 })
+		.withMessage("You should entrer at least one genre"),
+	body("description")
+		.isLength({ max: 1000 })
+		.withMessage("Description should be less than 1000 char"),
 ];
 
 async function indexPageGet(req, res) {
@@ -42,10 +48,37 @@ async function newGet(req, res) {
 const newPost = [
 	validateItem,
 	async (req, res) => {
-		const { errors } = validationResult(req);
-		console.log(errors)
+		const errors = validationResult(req);
 		const data = req.body;
-		console.log(data);
+		const groups = await db.getGroups();
+		const genres = await db.getGenres();
+		if (!errors.isEmpty()) {
+			return res.status(400).render("createItem", {
+				errors: errors.array(),
+				groups,
+				genres,
+				data,
+			});
+		}
+		if (data.genres.filter((el) => !el).length) {
+			return res.status(400).render("createItem", {
+				errors: [{ msg: "Genres should not be empty" }],
+				groups,
+				genres,
+				data,
+			});
+		}
+		try {
+			await db.createItem(data);
+			res.redirect("/");
+		} catch (e) {
+			return res.status(404).render("createItem", {
+				errors: [{ msg: e }],
+				groups,
+				genres,
+				data,
+			});
+		}
 	},
 ];
 
